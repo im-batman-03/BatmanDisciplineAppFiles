@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BATMAN DISCIPLINE</title>
+    <meta name="theme-color" content="#000000">
+    <link rel="manifest" href="./manifest.json">
+    <style>
+        :root {
+            --batman-yellow: #ffd700;
+            --batman-black: #000000;
+            --batman-gray: #222222;
+            --red-flag: #ff3838;
+            --yellow-flag: #ffd32a;
+            --green-flag: #05c46b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: var(--batman-black);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bat-logo {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250"><path fill="yellow" d="M125 6c-45 0-85 35-85 80 0 30 15 55 40 70-5 25-10 50-10 80h30c0-30 5-60 15-85 5-15 15-15 25-10 10-5 20-5 25 10 10 25 15 55 15 85h30c0-30-5-55-10-80 25-15 40-40 40-70 0-45-40-80-85-80z"/></svg>');
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--batman-gray);
+            border-bottom: 2px solid var(--batman-yellow);
+        }
+
+        h1 {
+            color: var(--batman-yellow);
+            margin: 10px 0;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-size: 1rem;
+            font-style: italic;
+            margin-bottom: 10px;
+            color: #aaa;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .task-form {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .task-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border: 1px solid var(--batman-yellow);
+            background-color: var(--batman-gray);
+            color: white;
+            border-radius: 4px;
+        }
+
+        .task-date {
+            padding: 10px;
+            border: 1px solid var(--batman-yellow);
+            background-color: var(--batman-gray);
+            color: white;
+            border-radius: 4px;
+        }
+
+        .task-time {
+            padding: 10px;
+            border: 1px solid var(--batman-yellow);
+            background-color: var(--batman-gray);
+            color: white;
+            border-radius: 4px;
+        }
+
+        .flag-selector {
+            display: flex;
+            gap: 5px;
+            margin-left: auto;
+        }
+
+        .flag {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .flag:hover {
+            transform: scale(1.1);
+        }
+
+        .flag-selected {
+            border-color: white;
+        }
+
+        .flag-red {
+            background-color: var(--red-flag);
+        }
+
+        .flag-yellow {
+            background-color: var(--yellow-flag);
+        }
+
+        .flag-green {
+            background-color: var(--green-flag);
+        }
+
+        .add-task {
+            padding: 10px 20px;
+            background-color: var(--batman-yellow);
+            color: var(--batman-black);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .add-task:hover {
+            background-color: #e6c200;
+        }
+
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            background-color: var(--batman-gray);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            border-left: 4px solid #666;
+        }
+
+        .task-item.completed {
+            opacity: 0.7;
+            text-decoration: line-through;
+        }
+
+        .task-item.red-flag {
+            border-left-color: var(--red-flag);
+        }
+
+        .task-item.yellow-flag {
+            border-left-color: var(--yellow-flag);
+        }
+
+        .task-item.green-flag {
+            border-left-color: var(--green-flag);
+        }
+
+        .task-text {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .task-date-display {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        .task-time-display {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .delete-task {
+            background: none;
+            border: none;
+            color: #ff4757;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .calendar-view {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .calendar-view th, .calendar-view td {
+            border: 1px solid #444;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .calendar-view th {
+            background-color: var(--batman-gray);
+            color: var(--batman-yellow);
+        }
+
+        .current-day {
+            background-color: rgba(255, 215, 0, 0.2);
+        }
+
+        .has-tasks {
+            background-color: rgba(5, 196, 107, 0.3);
+            position: relative;
+        }
+
+        .tab-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background-color: var(--batman-gray);
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid var(--batman-yellow);
+            color: var(--batman-yellow);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            .task-form {
+                flex-direction: column;
+            }
+            
+            .flag-selector {
+                margin-left: 0;
+            }
+            
+            .add-task {
+                width: 100%;
+            }
+        }
+
+        /* Notification styling */
+        #notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--batman-yellow);
+            color: var(--batman-black);
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            display: none;
+            max-width: 300px;
+            z-index: 1000;
+        }
+
+        #notification.show {
+            display: block;
+            animation: fadeIn 0.5s, fadeOut 0.5s 2.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="bat-logo"></div>
+        <h1>BATMAN DISCIPLINE</h1>
+        <h2>"It's not who I am underneath, but what I do that defines me"</h2>
+        <button id="downloadBtn" style="background: var(--batman-yellow); color: var(--batman-black); border: none; padding: 8px 16px; border-radius: 4px; margin-top: 10px; font-weight: bold; cursor: pointer;">Download App</button>
+    </header>
+
+    <main>
+        <div class="tab-container">
+            <button class="tab active" data-tab="tasks">Tasks</button>
+            <button class="tab" data-tab="calendar">Calendar</button>
+        </div>
+
+        <div id="tasks" class="tab-content active">
+            <form class="task-form">
+                <input type="text" class="task-input" placeholder="Add your battle plan..." required>
+                <input type="date" class="task-date">
+                <input type="time" class="task-time">
+                <div class="flag-selector">
+                    <div class="flag flag-red" data-flag="red" title="Most Important"></div>
+                    <div class="flag flag-yellow" data-flag="yellow" title="Moderately Important"></div>
+                    <div class="flag flag-green" data-flag="green" title="Important"></div>
+                </div>
+                <button type="submit" class="add-task">Add Mission</button>
+            </form>
+
+            <ul class="task-list">
+                <!-- Tasks will be added here dynamically -->
+            </ul>
+        </div>
+
+        <div id="calendar" class="tab-content">
+            <table class="calendar-view">
+                <thead>
+                    <tr>
+                        <th>Sun</th>
+                        <th>Mon</th>
+                        <th>Tue</th>
+                        <th>Wed</th>
+                        <th>Thu</th>
+                        <th>Fri</th>
+                        <th>Sat</th>
+                    </tr>
+                </thead>
+                <tbody id="calendar-body">
+                    <!-- Calendar will be populated with JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div id="notification">
+        <strong>BAT SIGNAL:</strong> <span id="notification-message"></span>
+    </div>
+
+    <div id="instructionModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 10000;">
+        <div style="background: var(--batman-gray); padding: 20px; border-radius: 8px; border: 2px solid var(--batman-yellow); max-width: 500px;">
+            <h3 style="color: var(--batman-yellow); margin-bottom: 15px;">HOW TO USE BATMAN DISCIPLINE</h3>
+            <ol style="margin-left: 20px; margin-bottom: 20px;">
+                <li>Click "Download App" to save the file</li>
+                <li>Open the downloaded HTML file in any browser</li>
+                <li>On mobile: Use "Add to Home Screen" for app-like experience</li>
+                <li>Works completely offline - all data saved locally</li>
+            </ol>
+            <button id="closeModal" style="background: var(--batman-yellow); color: var(--batman-black); border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; cursor: pointer;">Got It!</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Download button functionality
+            document.getElementById('downloadBtn').addEventListener('click', function() {
+                const htmlContent = `<!DOCTYPE html>${document.documentElement.outerHTML}`;
+                const blob = new Blob([htmlContent], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'batman-discipline.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                alert('App downloaded! Save this file and open it in any browser to use offline.');
+            });
+            // Prompt to install as PWA
+            let deferredPrompt;
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                showInstallPromo();
+            });
+
+            function showInstallPromo() {
+                const installContainer = document.createElement('div');
+                installContainer.style.position = 'fixed';
+                installContainer.style.bottom = '20px';
+                installContainer.style.right = '20px';
+                installContainer.style.background = '#ffd700';
+                installContainer.style.color = '#000';
+                installContainer.style.padding = '10px';
+                installContainer.style.borderRadius = '5px';
+                installContainer.style.boxShadow = '0 0 10px rgba(0,0,0,0.5)';
+                installContainer.style.zIndex = '1000';
+                installContainer.innerHTML = `
+                    <p><strong>Install BATMAN DISCIPLINE app?</strong></p>
+                    <button id="installBtn" style="background: #000; color: #ffd700; border: none; padding: 5px 10px; margin-right: 5px;">Install</button>
+                    <button id="dismissBtn" style="background: transparent; border: none; padding: 5px 10px;">Not Now</button>
+                `;
+                document.body.appendChild(installContainer);
+
+                document.getElementById('installBtn').addEventListener('click', async () => {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        installContainer.remove();
+                    }
+                });
+
+                document.getElementById('dismissBtn').addEventListener('click', () => {
+                    installContainer.remove();
+                });
+            }
+            const taskForm = document.querySelector('.task-form');
+            const taskInput = document.querySelector('.task-input');
+            const taskDate = document.querySelector('.task-date');
+            const taskTime = document.querySelector('.task-time');
+            const taskList = document.querySelector('.task-list');
+            const flagSelector = document.querySelectorAll('.flag');
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const notification = document.getElementById('notification');
+            const notificationMessage = document.getElementById('notification-message');
+            
+            let selectedFlag = null;
+            let tasks = JSON.parse(localStorage.getItem('batman-tasks')) || [];
+
+            // Set default date to today and default time to next hour
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            const formattedDate = today.toISOString().split('T')[0];
+            const nextHour = today.getHours() + 1;
+            
+            taskDate.value = formattedDate;
+            taskTime.value = `${nextHour.toString().padStart(2, '0')}:00`;
+            
+            // Flag selection
+            flagSelector.forEach(flag => {
+                flag.addEventListener('click', function() {
+                    flagSelector.forEach(f => f.classList.remove('flag-selected'));
+                    this.classList.add('flag-selected');
+                    selectedFlag = this.dataset.flag;
+                });
+            });
+
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(tc => tc.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById(this.dataset.tab).classList.add('active');
+                    
+                    if (this.dataset.tab === 'calendar') {
+                        renderCalendar();
+                    }
+                });
+            });
+
+            // Add task
+            taskForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const taskText = taskInput.value.trim();
+                const taskDateValue = taskDate.value;
+                const taskTimeValue = taskTime.value;
+                
+                if (taskText) {
+                    const newTask = {
+                        id: Date.now(),
+                        text: taskText,
+                        date: taskDateValue,
+                        time: taskTimeValue,
+                        flag: selectedFlag,
+                        completed: false,
+                        notificationShown: false
+                    };
+                    
+                    tasks.push(newTask);
+                    saveTasks();
+                    renderTasks();
+                    
+                    // Reset form
+                    taskInput.value = '';
+                    flagSelector.forEach(f => f.classList.remove('flag-selected'));
+                    selectedFlag = null;
+                }
+            });
+
+            // Render tasks with flag priority sorting
+            function renderTasks() {
+                // Sort by flag priority first (red > yellow > green > none) then by date/time
+                tasks.sort((a, b) => {
+                    const priorityOrder = {'red': 0, 'yellow': 1, 'green': 2};
+                    const aPriority = a.flag ? priorityOrder[a.flag] : 3;
+                    const bPriority = b.flag ? priorityOrder[b.flag] : 3;
+                    
+                    if (aPriority !== bPriority) {
+                        return aPriority - bPriority;
+                    }
+                    
+                    const dateA = new Date(`${a.date} ${a.time || '00:00'}`);
+                    const dateB = new Date(`${b.date} ${b.time || '00:00'}`);
+                    return dateA - dateB;
+                });
+                taskList.innerHTML = '';
+                
+                if (tasks.length === 0) {
+                    taskList.innerHTML = '<li class="empty-state">No missions planned yet. Gotham needs you!</li>';
+                    return;
+                }
+                
+                // Sort tasks by date and time
+                tasks.sort((a, b) => {
+                    const dateA = new Date(`${a.date} ${a.time || '00:00'}`);
+                    const dateB = new Date(`${b.date} ${b.time || '00:00'}`);
+                    return dateA - dateB;
+                });
+                
+                tasks.forEach(task => {
+                    const taskItem = document.createElement('li');
+                    taskItem.className = `task-item ${task.flag ? task.flag + '-flag' : ''} ${task.completed ? 'completed' : ''}`;
+                    taskItem.dataset.id = task.id;
+                    
+                    const taskCheckbox = document.createElement('input');
+                    taskCheckbox.type = 'checkbox';
+                    taskCheckbox.className = 'task-checkbox';
+                    taskCheckbox.checked = task.completed;
+                    taskCheckbox.addEventListener('change', function() {
+                        task.completed = this.checked;
+                        saveTasks();
+                        renderTasks();
+                    });
+                    
+                    const taskText = document.createElement('div');
+                    taskText.className = 'task-text';
+                    
+                    const taskTitle = document.createElement('div');
+                    taskTitle.textContent = task.text;
+                    
+                    const taskDetails = document.createElement('div');
+                    
+                    if (task.date) {
+                        const dateDisplay = document.createElement('span');
+                        dateDisplay.className = 'task-date-display';
+                        dateDisplay.textContent = formatDate(task.date);
+                        taskDetails.appendChild(dateDisplay);
+                    }
+                    
+                    if (task.time) {
+                        const timeDisplay = document.createElement('span');
+                        timeDisplay.className = 'task-time-display';
+                        timeDisplay.textContent = `at ${task.time}`;
+                        taskDetails.appendChild(timeDisplay);
+                    }
+                    
+                    taskText.appendChild(taskTitle);
+                    taskText.appendChild(taskDetails);
+                    
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'delete-task';
+                    deleteButton.innerHTML = '&times;';
+                    deleteButton.addEventListener('click', function() {
+                        tasks = tasks.filter(t => t.id !== task.id);
+                        saveTasks();
+                        renderTasks();
+                    });
+                    
+                    taskItem.appendChild(taskCheckbox);
+                    taskItem.appendChild(taskText);
+                    taskItem.appendChild(deleteButton);
+                    
+                    taskList.appendChild(taskItem);
+                });
+                
+                // Check for notifications
+                checkNotifications();
+            }
+
+            // Save tasks to localStorage
+            function saveTasks() {
+                localStorage.setItem('batman-tasks', JSON.stringify(tasks));
+                
+                // Update service worker if exists
+                if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage({
+                        type: 'UPDATE_TASKS',
+                        tasks: tasks
+                    });
+                }
+            }
+            
+            // Format date
+            function formatDate(dateString) {
+                const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+                return new Date(dateString).toLocaleDateString(undefined, options);
+            }
+            
+            // Check for tasks that need notifications
+            function checkNotifications() {
+                const now = new Date();
+                const tenMinutesFromNow = new Date(now.getTime() + 10 * 60000);
+                
+                // Check for morning notification (tasks for today)
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const tomorrowTasks = tasks.filter(task => 
+                    !task.completed && 
+                    new Date(task.date).toDateString() === tomorrow.toDateString()
+                );
+                
+                if (tomorrowTasks.length > 0 && now.getHours() >= 21) { // After 9pm
+                    showNotification("Check out your tomorrow's fight, BATMAN");
+                }
+                
+                // Check for upcoming tasks
+                tasks.forEach(task => {
+                    if (!task.completed && task.date && task.time && !task.notificationShown) {
+                        const taskDateTime = new Date(`${task.date} ${task.time}`);
+                        
+                        // If task is within 10 minutes
+                        if (taskDateTime > now && taskDateTime <= tenMinutesFromNow) {
+                            showNotification(`Mission Alert: ${task.text} in 10 minutes`);
+                            task.notificationShown = true;
+                            saveTasks();
+                        }
+                    }
+                });
+            }
+            
+            // Show notification
+            function showNotification(message) {
+                notificationMessage.textContent = message;
+                notification.classList.add('show');
+                
+                // Show web notification if supported and allowed
+                if ('Notification' in window && Notification.permission === 'granted' && 
+                    document.visibilityState === 'hidden') {
+                    new Notification('BATMAN DISCIPLINE', {
+                        body: message,
+                        icon: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250"><path fill="yellow" d="M125 6c-45 0-85 35-85 80 0 30 15 55 40 70-5 25-10 50-10 80h30c0-30 5-60 15-85 5-15 15-15 25-10 10-5 20-5 25 10 10 25 15 55 15 85h30c0-30-5-55-10-80 25-15 40-40 40-70 0-45-40-80-85-80z"/></svg>'
+                    });
+                }
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+            
+            // Render calendar
+            function renderCalendar() {
+                const calendarBody = document.getElementById('calendar-body');
+                calendarBody.innerHTML = '';
+                
+                const now = new Date();
+                const currentMonth = now.getMonth();
+                const currentYear = now.getFullYear();
+                const currentDay = now.getDate();
+                
+                const firstDay = new Date(currentYear, currentMonth, 1);
+                const lastDay = new Date(currentYear, currentMonth + 1, 0);
+                
+                let dayCounter = 1;
+                let shouldBreak = false;
+                
+                // Get tasks for this month
+                const monthTasks = tasks.filter(task => {
+                    const taskDate = new Date(task.date);
+                    return taskDate.getMonth() === currentMonth && 
+                           taskDate.getFullYear() === currentYear &&
+                           !task.completed;
+                });
+                
+                // Create calendar rows
+                for (let i = 0; i < 6; i++) {
+                    if (shouldBreak) break;
+                    
+                    const row = document.createElement('tr');
+                    
+                    for (let j = 0; j < 7; j++) {
+                        if (i === 0 && j < firstDay.getDay()) {
+                            // Empty cells before first day of month
+                            const cell = document.createElement('td');
+                            row.appendChild(cell);
+                        } else if (dayCounter > lastDay.getDate()) {
+                            // Empty cells after last day of month
+                            const cell = document.createElement('td');
+                            row.appendChild(cell);
+                            shouldBreak = true;
+                        } else {
+                            // Day cells
+                            const cell = document.createElement('td');
+                            
+                            if (dayCounter === currentDay) {
+                                cell.classList.add('current-day');
+                            }
+                            
+                            // Check if day has tasks
+                            const hasTasks = monthTasks.some(task => {
+                                const taskDay = new Date(task.date).getDate();
+                                return taskDay === dayCounter;
+                            });
+                            
+                            if (hasTasks) {
+                                cell.classList.add('has-tasks');
+                            }
+                            
+                            cell.textContent = dayCounter;
+                            dayCounter++;
+                            row.appendChild(cell);
+                        }
+                    }
+                    
+                    calendarBody.appendChild(row);
+                }
+            }
+            
+            // Initialize the app
+            renderTasks();
+            
+            // Handle instruction modal
+            const modal = document.getElementById('instructionModal');
+            document.getElementById('closeModal').addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+            
+            // Show modal on first visit
+            if (!localStorage.getItem('batmanAppSeen')) {
+                modal.style.display = 'flex';
+                localStorage.setItem('batmanAppSeen', 'true');
+            }
+            
+            // Request notification permission
+            if ('Notification' in window) {
+                Notification.requestPermission();
+            }
+            
+            // Check for notifications periodically
+            setInterval(checkNotifications, 60000); // Every minute
+            
+            // Check for tomorrow's tasks every hour (in case app stays open)
+            setInterval(() => {
+                const now = new Date();
+                if (now.getHours() === 21) { // At 9pm
+                    checkNotifications();
+                }
+            }, 3600000);
+            
+            // Register service worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./sw.js').then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    }).catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
+
